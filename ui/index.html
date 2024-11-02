@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zuul Banking System - Single Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 30px;
+        }
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            background-color: #1a1a1a;
+            color: #fff;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .card-header {
+            background-color: #333;
+            color: #fff;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            margin-top: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .notification {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .notification.success {
+            background-color: #28a745;
+            color: white;
+        }
+        .notification.error {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Zuul Banking System</h1>
+
+        <!-- Notification Area -->
+        <div id="notification" class="notification"></div>
+
+        <!-- Create User Form -->
+        <div class="card">
+            <div class="card-header">Create User</div>
+            <div class="card-body">
+                <form onsubmit="createUser(event)">
+                    <div class="mb-3">
+                        <label for="accountId" class="form-label">Account ID</label>
+                        <input type="text" id="accountId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customerName" class="form-label">Customer Name</label>
+                        <input type="text" id="customerName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="initialBalance" class="form-label">Initial Balance</label>
+                        <input type="number" id="initialBalance" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Update Funds Form -->
+        <div class="card">
+            <div class="card-header">Update Funds</div>
+            <div class="card-body">
+                <form onsubmit="updateFunds(event)">
+                    <div class="mb-3">
+                        <label for="updateAccountId" class="form-label">Account ID</label>
+                        <input type="text" id="updateAccountId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" id="amount" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Update Funds</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Transfer Funds Form -->
+        <div class="card">
+            <div class="card-header">Transfer Funds</div>
+            <div class="card-body">
+                <form onsubmit="transferFunds(event)">
+                    <div class="mb-3">
+                        <label for="fromAccountId" class="form-label">From Account ID</label>
+                        <input type="text" id="fromAccountId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="toAccountId" class="form-label">To Account ID</label>
+                        <input type="text" id="toAccountId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="transferAmount" class="form-label">Amount</label>
+                        <input type="number" id="transferAmount" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-info">Transfer Funds</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Create Loan Form -->
+        <div class="card">
+            <div class="card-header">Create Loan</div>
+            <div class="card-body">
+                <form onsubmit="createLoan(event)">
+                    <div class="mb-3">
+                        <label for="loanAccountId" class="form-label">Account ID</label>
+                        <input type="text" id="loanAccountId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loanAmount" class="form-label">Loan Amount</label>
+                        <input type="number" id="loanAmount" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loanInterestRate" class="form-label">Interest Rate (%)</label>
+                        <input type="number" id="loanInterestRate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loanInstallments" class="form-label">Number of Installments</label>
+                        <input type="number" id="loanInstallments" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Loan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View User Profile -->
+        <div class="card">
+            <div class="card-header">User Profile</div>
+            <div class="card-body">
+                <form onsubmit="viewUserProfile(event)">
+                    <div class="mb-3">
+                        <label for="profileAccountId" class="form-label">Account ID</label>
+                        <input type="text" id="profileAccountId" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">View Profile</button>
+                </form>
+                <div id="profileDetails" class="mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Update Loan Form -->
+        <div class="card">
+            <div class="card-header">Update Loan</div>
+            <div class="card-body">
+                <form onsubmit="updateLoan(event)">
+                    <div class="mb-3">
+                        <label for="updateLoanAccountId" class="form-label">Account ID</label>
+                        <input type="text" id="updateLoanAccountId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateLoanAmount" class="form-label">New Loan Amount</label>
+                        <input type="number" id="updateLoanAmount" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateLoanInterestRate" class="form-label">New Interest Rate (%)</label>
+                        <input type="number" id="updateLoanInterestRate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateLoanInstallments" class="form-label">New Number of Installments</label>
+                        <input type="number" id="updateLoanInstallments" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Update Loan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Loan Form -->
+        <div class="card">
+            <div class="card-header">Delete Loan</div>
+            <div class="card-body">
+                <form onsubmit="deleteLoan(event)">
+                    <div class="mb-3">
+                        <label for="deleteLoanAccountId" class="form-label">Account ID</label>
+                        <input type="text" id="deleteLoanAccountId" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete Loan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete User Form -->
+        <div class="card">
+            <div class="card-header">Delete User</div>
+            <div class="card-body">
+                <form onsubmit="deleteUser(event)">
+                    <div class="mb-3">
+                        <label for="deleteUserAccountId" class="form-label">Account ID</label>
+                        <input type="text" id="deleteUserAccountId" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete User</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2024 Zuul Banking - All Rights Reserved
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+fastapi
+graphene
+ariadne
+motor
+uvicorn
+pika
+python-dotenv
